@@ -3,9 +3,13 @@ package com.example.ui.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.ui.draw.scale
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -372,10 +376,20 @@ fun QuizScreen(
                                 else -> "د"
                             }
 
+                            val optionScale by animateFloatAsState(
+                                targetValue = if (isSelected && isSubmitted) 1.035f else 1f,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMedium
+                                ),
+                                label = "option_scale"
+                            )
+
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .shadow(if (isSelected || (isSubmitted && isCorrectAnswer)) 4.dp else 1.dp, RoundedCornerShape(16.dp))
+                                    .scale(optionScale)
+                                    .shadow(if (isSelected || (isSubmitted && isCorrectAnswer)) 6.dp else 1.dp, RoundedCornerShape(16.dp))
                                     .clip(RoundedCornerShape(16.dp))
                                     .border(BorderStroke(2.dp, borderColor), RoundedCornerShape(16.dp))
                                     .clickable(enabled = !isSubmitted) {

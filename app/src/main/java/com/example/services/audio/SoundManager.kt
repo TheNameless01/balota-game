@@ -1,16 +1,23 @@
 package com.example.services.audio
 
 import android.content.Context
-import android.media.AudioManager
-import android.media.ToneGenerator
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import com.example.R
 
 class SoundManager(private val context: Context) {
 
-    private var toneGenerator: ToneGenerator? = null
+    private var soundPool: SoundPool? = null
+    private var clickId: Int = 0
+    private var correctId: Int = 0
+    private var incorrectId: Int = 0
+    private var victoryId: Int = 0
+    private var achievementId: Int = 0
+
     private val vibrator: Vibrator? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
@@ -23,42 +30,56 @@ class SoundManager(private val context: Context) {
 
     init {
         try {
-            toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 75)
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+
+            soundPool = SoundPool.Builder()
+                .setMaxStreams(6)
+                .setAudioAttributes(audioAttributes)
+                .build()
+
+            clickId = soundPool?.load(context, R.raw.sfx_click, 1) ?: 0
+            correctId = soundPool?.load(context, R.raw.sfx_correct, 1) ?: 0
+            incorrectId = soundPool?.load(context, R.raw.sfx_incorrect, 1) ?: 0
+            victoryId = soundPool?.load(context, R.raw.sfx_victory, 1) ?: 0
+            achievementId = soundPool?.load(context, R.raw.sfx_achievement, 1) ?: 0
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
     fun playClick(soundEnabled: Boolean = true, hapticsEnabled: Boolean = true) {
-        if (soundEnabled) {
+        if (soundEnabled && clickId != 0) {
             try {
-                toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 35)
+                soundPool?.play(clickId, 0.9f, 0.9f, 1, 0, 1.0f)
             } catch (e: Exception) {
                 // Ignore gracefully
             }
         }
         if (hapticsEnabled) {
-            vibrate(20)
+            vibrate(18)
         }
     }
 
     fun playCorrect(soundEnabled: Boolean = true, hapticsEnabled: Boolean = true) {
-        if (soundEnabled) {
+        if (soundEnabled && correctId != 0) {
             try {
-                toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 180)
+                soundPool?.play(correctId, 1.0f, 1.0f, 2, 0, 1.0f)
             } catch (e: Exception) {
                 // Ignore gracefully
             }
         }
         if (hapticsEnabled) {
-            vibrate(50)
+            vibrate(45)
         }
     }
 
     fun playIncorrect(soundEnabled: Boolean = true, hapticsEnabled: Boolean = true) {
-        if (soundEnabled) {
+        if (soundEnabled && incorrectId != 0) {
             try {
-                toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
+                soundPool?.play(incorrectId, 0.9f, 0.9f, 2, 0, 1.0f)
             } catch (e: Exception) {
                 // Ignore gracefully
             }
@@ -69,28 +90,28 @@ class SoundManager(private val context: Context) {
     }
 
     fun playQuizComplete(soundEnabled: Boolean = true, hapticsEnabled: Boolean = true) {
-        if (soundEnabled) {
+        if (soundEnabled && victoryId != 0) {
             try {
-                toneGenerator?.startTone(ToneGenerator.TONE_PROP_PROMPT, 300)
+                soundPool?.play(victoryId, 1.0f, 1.0f, 3, 0, 1.0f)
             } catch (e: Exception) {
                 // Ignore gracefully
             }
         }
         if (hapticsEnabled) {
-            vibrate(100)
+            vibrate(90)
         }
     }
 
     fun playAchievementUnlocked(soundEnabled: Boolean = true, hapticsEnabled: Boolean = true) {
-        if (soundEnabled) {
+        if (soundEnabled && achievementId != 0) {
             try {
-                toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP2, 250)
+                soundPool?.play(achievementId, 1.0f, 1.0f, 3, 0, 1.0f)
             } catch (e: Exception) {
                 // Ignore gracefully
             }
         }
         if (hapticsEnabled) {
-            vibrate(80)
+            vibrate(70)
         }
     }
 
@@ -115,14 +136,14 @@ class SoundManager(private val context: Context) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     vibrator?.vibrate(
                         VibrationEffect.createWaveform(
-                            longArrayOf(0, 40, 60, 40),
-                            intArrayOf(0, 180, 0, 180),
+                            longArrayOf(0, 35, 50, 35),
+                            intArrayOf(0, 160, 0, 160),
                             -1
                         )
                     )
                 } else {
                     @Suppress("DEPRECATION")
-                    vibrator?.vibrate(longArrayOf(0, 40, 60, 40), -1)
+                    vibrator?.vibrate(longArrayOf(0, 35, 50, 35), -1)
                 }
             }
         } catch (e: Exception) {
@@ -132,8 +153,8 @@ class SoundManager(private val context: Context) {
 
     fun release() {
         try {
-            toneGenerator?.release()
-            toneGenerator = null
+            soundPool?.release()
+            soundPool = null
         } catch (e: Exception) {
             // Ignore gracefully
         }

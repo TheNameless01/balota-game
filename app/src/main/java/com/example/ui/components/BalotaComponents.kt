@@ -1,6 +1,12 @@
 package com.example.ui.components
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -226,6 +234,26 @@ fun BalotaMascotGreeting(
     modifier: Modifier = Modifier,
     subMessage: String? = null
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "home_mascot")
+    val mascotFloatY by infiniteTransition.animateFloat(
+        initialValue = -4f,
+        targetValue = 4f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "home_mascot_y"
+    )
+    val mascotTilt by infiniteTransition.animateFloat(
+        initialValue = -2.5f,
+        targetValue = 2.5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "home_mascot_tilt"
+    )
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -240,13 +268,19 @@ fun BalotaMascotGreeting(
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.balota_logo),
-                contentDescription = "بلوطة",
+            Box(
                 modifier = Modifier
-                    .size(90.dp)
-                    .clip(RoundedCornerShape(16.dp))
-            )
+                    .offset(y = mascotFloatY.dp)
+                    .rotate(mascotTilt)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.balota_logo),
+                    contentDescription = "بلوطة",
+                    modifier = Modifier
+                        .size(92.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
