@@ -1,0 +1,6 @@
+{
+  "name": "بلوطة",
+  "description": "لعبة أسئلة وألغاز تعليمية للأطفال لاكتشاف الجزائر وتاريخها وولاياتها مع البطل بلوطة!",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
