@@ -2,6 +2,7 @@ package com.example.services.audio
 
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.media.SoundPool
 import android.os.Build
 import android.os.VibrationEffect
@@ -12,6 +13,8 @@ import com.example.R
 class SoundManager(private val context: Context) {
 
     private var soundPool: SoundPool? = null
+    private var mediaPlayer: MediaPlayer? = null
+
     private var clickId: Int = 0
     private var correctId: Int = 0
     private var incorrectId: Int = 0
@@ -49,6 +52,58 @@ class SoundManager(private val context: Context) {
             e.printStackTrace()
         }
     }
+
+    // --- Background Children Music ---
+
+    fun startMusic(enabled: Boolean) {
+        if (!enabled) return
+        try {
+            if (mediaPlayer == null) {
+                mediaPlayer = MediaPlayer.create(context, R.raw.bgm_kids_loop)
+                mediaPlayer?.isLooping = true
+                mediaPlayer?.setVolume(0.35f, 0.35f)
+            }
+            if (mediaPlayer?.isPlaying == false) {
+                mediaPlayer?.start()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun pauseMusic() {
+        try {
+            if (mediaPlayer?.isPlaying == true) {
+                mediaPlayer?.pause()
+            }
+        } catch (e: Exception) {
+            // Ignore gracefully
+        }
+    }
+
+    fun resumeMusic(enabled: Boolean) {
+        if (enabled) {
+            try {
+                if (mediaPlayer == null) {
+                    startMusic(true)
+                } else if (mediaPlayer?.isPlaying == false) {
+                    mediaPlayer?.start()
+                }
+            } catch (e: Exception) {
+                // Ignore gracefully
+            }
+        }
+    }
+
+    fun setMusicEnabled(enabled: Boolean) {
+        if (enabled) {
+            startMusic(true)
+        } else {
+            pauseMusic()
+        }
+    }
+
+    // --- Sound Effects ---
 
     fun playClick(soundEnabled: Boolean = true, hapticsEnabled: Boolean = true) {
         if (soundEnabled && clickId != 0) {
@@ -153,6 +208,10 @@ class SoundManager(private val context: Context) {
 
     fun release() {
         try {
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+            mediaPlayer = null
+
             soundPool?.release()
             soundPool = null
         } catch (e: Exception) {

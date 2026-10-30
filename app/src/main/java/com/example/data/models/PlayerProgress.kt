@@ -9,6 +9,7 @@ data class PlayerProgress(
     val completedWilayas: Set<String> = emptySet(),
     val unlockedAchievementIds: Set<String> = emptySet(),
     val soundEnabled: Boolean = true,
+    val musicEnabled: Boolean = true,
     val hapticsEnabled: Boolean = true,
     val timerEnabled: Boolean = false,
     val timerDurationSeconds: Int = 20

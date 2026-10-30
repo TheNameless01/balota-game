@@ -58,6 +58,7 @@ import com.example.ui.theme.TextSecondary
 fun SettingsScreen(
     progress: PlayerProgress,
     onSoundToggle: (Boolean) -> Unit,
+    onMusicToggle: (Boolean) -> Unit,
     onHapticsToggle: (Boolean) -> Unit,
     onTimerToggle: (Boolean) -> Unit,
     onResetProgress: () -> Unit,
@@ -173,6 +174,43 @@ fun SettingsScreen(
                                         checkedTrackColor = BalotaForestGreen
                                     ),
                                     modifier = Modifier.testTag("sound_toggle")
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            // Background Music Toggle
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = "🎼", fontSize = 22.sp)
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Text(
+                                            text = "موسيقى الأطفال الخلفية",
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = TextPrimary
+                                        )
+                                        Text(
+                                            text = "موسيقى هادئة وجميلة تعزف باستمرار أثناء اللعب",
+                                            fontSize = 12.sp,
+                                            color = TextSecondary
+                                        )
+                                    }
+                                }
+
+                                Switch(
+                                    checked = progress.musicEnabled,
+                                    onCheckedChange = onMusicToggle,
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = Color.White,
+                                        checkedTrackColor = BalotaForestGreen
+                                    ),
+                                    modifier = Modifier.testTag("music_toggle")
                                 )
                             }
 

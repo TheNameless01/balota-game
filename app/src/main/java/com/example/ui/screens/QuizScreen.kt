@@ -341,13 +341,17 @@ fun QuizScreen(
                     }
                 }
 
-                // Four Options
+                // Four Options (Randomized order so correct answer is randomly distributed)
                 item {
+                    val shuffledOptions = remember(currentQuestion.id) {
+                        currentQuestion.options.shuffled()
+                    }
+
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        currentQuestion.options.forEachIndexed { optIndex, optionText ->
+                        shuffledOptions.forEachIndexed { optIndex, optionText ->
                             val isSelected = selectedOption == optionText
                             val isCorrectAnswer = currentQuestion.isOptionCorrect(optionText)
 

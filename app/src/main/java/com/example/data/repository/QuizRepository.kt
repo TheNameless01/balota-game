@@ -65,7 +65,9 @@ class QuizRepository(private val context: Context) {
 
     fun getRandomQuiz(count: Int = 10): List<Question> {
         val shuffled = cachedQuestions.shuffled()
-        return shuffled.take(count.coerceAtMost(cachedQuestions.size))
+        return shuffled.take(count.coerceAtMost(cachedQuestions.size)).map { q ->
+            q.copy(options = q.options.shuffled())
+        }
     }
 
     fun getQuestionsByWilaya(wilayaRef: String): List<Question> {
@@ -73,15 +75,17 @@ class QuizRepository(private val context: Context) {
             it.wilayaRef.equals(wilayaRef, ignoreCase = true) ||
             it.wilayaCode == wilayaRef.trim() ||
             it.wilayaName.equals(wilayaRef.trim(), ignoreCase = true)
-        }
+        }.map { it.copy(options = it.options.shuffled()) }
     }
 
     fun getQuestionsByCategory(category: String): List<Question> {
         return cachedQuestions.filter { it.category == category }
+            .map { it.copy(options = it.options.shuffled()) }
     }
 
     fun getQuestionsByDifficulty(difficulty: String): List<Question> {
         return cachedQuestions.filter { it.difficulty == difficulty }
+            .map { it.copy(options = it.options.shuffled()) }
     }
 
     fun getCategoriesWithCounts(): Map<String, Int> {
@@ -131,6 +135,6 @@ class QuizRepository(private val context: Context) {
         val random = java.util.Random(seed.toLong())
         val copy = cachedQuestions.toMutableList()
         copy.shuffle(random)
-        return copy.take(count.coerceAtMost(copy.size))
+        return copy.take(count.coerceAtMost(copy.size)).map { it.copy(options = it.options.shuffled()) }
     }
 }

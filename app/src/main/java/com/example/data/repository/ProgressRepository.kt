@@ -24,6 +24,7 @@ class ProgressRepository(context: Context) {
         val completedWilayas = prefs.getStringSet("completed_wilayas", emptySet()) ?: emptySet()
         val unlockedAchievements = prefs.getStringSet("unlocked_achievements", emptySet()) ?: emptySet()
         val soundEnabled = prefs.getBoolean("sound_enabled", true)
+        val musicEnabled = prefs.getBoolean("music_enabled", true)
         val hapticsEnabled = prefs.getBoolean("haptics_enabled", true)
         val timerEnabled = prefs.getBoolean("timer_enabled", false)
         val timerDuration = prefs.getInt("timer_duration", 20)
@@ -37,6 +38,7 @@ class ProgressRepository(context: Context) {
             completedWilayas = completedWilayas,
             unlockedAchievementIds = unlockedAchievements,
             soundEnabled = soundEnabled,
+            musicEnabled = musicEnabled,
             hapticsEnabled = hapticsEnabled,
             timerEnabled = timerEnabled,
             timerDurationSeconds = timerDuration
@@ -103,6 +105,11 @@ class ProgressRepository(context: Context) {
         _progressFlow.value = _progressFlow.value.copy(soundEnabled = enabled)
     }
 
+    fun setMusicEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("music_enabled", enabled).apply()
+        _progressFlow.value = _progressFlow.value.copy(musicEnabled = enabled)
+    }
+
     fun setHapticsEnabled(enabled: Boolean) {
         prefs.edit().putBoolean("haptics_enabled", enabled).apply()
         _progressFlow.value = _progressFlow.value.copy(hapticsEnabled = enabled)
@@ -131,6 +138,7 @@ class ProgressRepository(context: Context) {
 
         _progressFlow.value = PlayerProgress(
             soundEnabled = _progressFlow.value.soundEnabled,
+            musicEnabled = _progressFlow.value.musicEnabled,
             hapticsEnabled = _progressFlow.value.hapticsEnabled,
             timerEnabled = _progressFlow.value.timerEnabled,
             timerDurationSeconds = _progressFlow.value.timerDurationSeconds

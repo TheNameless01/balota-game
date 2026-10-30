@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,6 +70,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        soundManager.resumeMusic(progressRepository.progressFlow.value.musicEnabled)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        soundManager.pauseMusic()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         soundManager.release()
@@ -83,6 +94,10 @@ fun BalotaAppContent(
 ) {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Splash) }
     val progress by progressRepository.progressFlow.collectAsState()
+
+    LaunchedEffect(progress.musicEnabled) {
+        soundManager.setMusicEnabled(progress.musicEnabled)
+    }
 
     when (val screen = currentScreen) {
         is Screen.Splash -> {
@@ -289,6 +304,10 @@ fun BalotaAppContent(
                 progress = progress,
                 onSoundToggle = { enabled ->
                     progressRepository.setSoundEnabled(enabled)
+                },
+                onMusicToggle = { enabled ->
+                    progressRepository.setMusicEnabled(enabled)
+                    soundManager.setMusicEnabled(enabled)
                 },
                 onHapticsToggle = { enabled ->
                     progressRepository.setHapticsEnabled(enabled)
