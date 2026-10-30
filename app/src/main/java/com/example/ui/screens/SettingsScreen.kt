@@ -3,7 +3,9 @@ package com.example.ui.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -62,6 +64,7 @@ fun SettingsScreen(
     onHapticsToggle: (Boolean) -> Unit,
     onTimerToggle: (Boolean) -> Unit,
     onResetProgress: () -> Unit,
+    onManageQuestionsClick: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -287,6 +290,67 @@ fun SettingsScreen(
                                     modifier = Modifier.testTag("timer_toggle")
                                 )
                             }
+                        }
+                    }
+                }
+
+                // Questions Management Section
+                item {
+                    Text(
+                        text = "تحديث وإضافة الأسئلة 📚",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = BalotaForestGreenDark
+                    )
+                }
+
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .shadow(2.dp, RoundedCornerShape(20.dp))
+                            .clip(RoundedCornerShape(20.dp))
+                            .clickable(onClick = onManageQuestionsClick)
+                            .testTag("manage_questions_card"),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(46.dp)
+                                        .background(Color(0xFFE8F5E9), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = "📥", fontSize = 24.sp)
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        text = "تحديث بنك الأسئلة (OTA Cloud)",
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = TextPrimary
+                                    )
+                                    Text(
+                                        text = "تحديث عبر الرابط أو إضافة أسئلة جديدة دون إعادة تثبيت",
+                                        fontSize = 12.sp,
+                                        color = TextSecondary,
+                                        lineHeight = 16.sp
+                                    )
+                                }
+                            }
+
+                            Text(text = "فتح ⬅️", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = BalotaForestGreen)
                         }
                     }
                 }

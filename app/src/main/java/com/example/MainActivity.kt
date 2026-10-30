@@ -28,6 +28,7 @@ import com.example.ui.screens.AchievementsScreen
 import com.example.ui.screens.CategoriesScreen
 import com.example.ui.screens.DifficultyScreen
 import com.example.ui.screens.HomeScreen
+import com.example.ui.screens.ManageQuestionsScreen
 import com.example.ui.screens.QuizScreen
 import com.example.ui.screens.ResultsScreen
 import com.example.ui.screens.ReviewScreen
@@ -318,9 +319,26 @@ fun BalotaAppContent(
                 onResetProgress = {
                     progressRepository.resetProgress()
                 },
+                onManageQuestionsClick = {
+                    soundManager.playClick(progress.soundEnabled, progress.hapticsEnabled)
+                    currentScreen = Screen.ManageQuestions
+                },
                 onBack = {
                     soundManager.playClick(progress.soundEnabled, progress.hapticsEnabled)
                     currentScreen = Screen.Home
+                }
+            )
+        }
+
+        is Screen.ManageQuestions -> {
+            ManageQuestionsScreen(
+                quizRepository = quizRepository,
+                soundManager = soundManager,
+                soundEnabled = progress.soundEnabled,
+                hapticsEnabled = progress.hapticsEnabled,
+                onBack = {
+                    soundManager.playClick(progress.soundEnabled, progress.hapticsEnabled)
+                    currentScreen = Screen.Settings
                 }
             )
         }

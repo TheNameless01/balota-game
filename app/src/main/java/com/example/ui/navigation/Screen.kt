@@ -30,4 +30,5 @@ sealed class Screen {
     object Difficulty : Screen()
     object Achievements : Screen()
     object Settings : Screen()
+    object ManageQuestions : Screen()
 }
